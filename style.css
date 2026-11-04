@@ -1,0 +1,143 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: white;
+    background: linear-gradient(135deg, #071d35, #104e59);
+}
+
+h1 {
+    color: #ffd166;
+    font-size: 38px;
+    text-shadow: 0 0 15px #ffae00;
+}
+
+.subtitle {
+    color: #c8e6df;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.stat {
+    background: #173d4a;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 1px solid #ffd166;
+}
+
+.game {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 4px;
+    max-width: 560px;
+    margin: 25px auto;
+    background: #173d4a;
+    padding: 8px;
+    border-radius: 15px;
+}
+
+.tile {
+    aspect-ratio: 1;
+    background: #63a85a;
+    border-radius: 7px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(15px, 4vw, 27px);
+}
+
+.player {
+    background: #ffe08a;
+    box-shadow: 0 0 12px gold;
+}
+
+.tree {
+    background: #246044;
+}
+
+.rock {
+    background: #777b80;
+}
+
+.treasure {
+    background: #e5a52d;
+    animation: glow 1s infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 3px gold; }
+    to { box-shadow: 0 0 15px gold; }
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    background: #ffd166;
+    color: #173044;
+    font-weight: bold;
+    padding: 12px 20px;
+    margin: 4px;
+    font-size: 20px;
+}
+
+button:hover {
+    background: #ffb52e;
+    transform: scale(1.05);
+}
+
+.message {
+    background: #173d4a;
+    padding: 15px;
+    border-radius: 12px;
+    max-width: 560px;
+    margin: 15px auto;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000b;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: #173d4a;
+    border: 2px solid #ffd166;
+    padding: 25px;
+    border-radius: 18px;
+    max-width: 380px;
+}
+
+input {
+    padding: 12px;
+    width: 100%;
+    margin: 15px 0;
+    border-radius: 8px;
+    border: none;
+}
+
+#feedback {
+    color: #ffd166;
+}
+
+@media(max-width: 450px) {
+    body { padding: 8px; }
+    h1 { font-size: 29px; }
+    .game { gap: 2px; padding: 4px; }
+}
