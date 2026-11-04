@@ -1,143 +1,285 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Poppins:wght@400;600;700&display=swap');
+
 * {
     box-sizing: border-box;
 }
 
 body {
     margin: 0;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    text-align: center;
+    min-height: 100vh;
     color: white;
-    background: linear-gradient(135deg, #071d35, #104e59);
+    background: linear-gradient(160deg, #071b2b, #103f45, #071b2b);
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+}
+
+header {
+    padding: 25px 15px;
+    background: #071521;
+    border-bottom: 1px solid #d4a84b;
+}
+
+.logo {
+    color: #ffd166;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 25px;
+    font-weight: 900;
+    letter-spacing: 3px;
+}
+
+.tagline {
+    color: #8fb9b0;
+    font-size: 10px;
+    letter-spacing: 5px;
+    margin-top: 8px;
+}
+
+main {
+    width: min(950px, 94%);
+    margin: auto;
+}
+
+.welcome {
+    padding: 45px 15px 25px;
+}
+
+.eyebrow {
+    color: #ffd166;
+    letter-spacing: 4px;
+    font-size: 11px;
 }
 
 h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(28px, 6vw, 48px);
+}
+
+h1 span {
     color: #ffd166;
-    font-size: 38px;
-    text-shadow: 0 0 15px #ffae00;
 }
 
-.subtitle {
-    color: #c8e6df;
+.welcome p:not(.eyebrow) {
+    color: #b6d1cc;
 }
 
-.stats {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin: 20px;
+button {
+    background: linear-gradient(135deg, #ffd166, #e99a31);
+    color: #182b30;
+    border: none;
+    border-radius: 10px;
+    padding: 13px 20px;
+    font-weight: 900;
+    cursor: pointer;
+    transition: .25s;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px #ffca5570;
+}
+
+#startBtn {
+    margin-top: 15px;
+    padding: 16px 30px;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin: 20px 0;
 }
 
 .stat {
-    background: #173d4a;
-    padding: 12px 20px;
+    padding: 15px 5px;
+    background: #143d46;
+    border: 1px solid #39706d;
     border-radius: 12px;
-    border: 1px solid #ffd166;
+    font-size: 19px;
+}
+
+.stat span {
+    font-weight: bold;
+    color: #ffd166;
+}
+
+.stat small {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: #a9c6bd;
+    margin-top: 5px;
+}
+
+.game-panel {
+    padding: 15px;
+    background: #102e38;
+    border: 1px solid #527a6b;
+    border-radius: 18px;
+}
+
+.game-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px;
+    color: #ffd166;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
 }
 
 .game {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
     gap: 4px;
-    max-width: 560px;
-    margin: 25px auto;
-    background: #173d4a;
     padding: 8px;
-    border-radius: 15px;
+    background: #09242c;
+    border-radius: 12px;
 }
 
 .tile {
     aspect-ratio: 1;
-    background: #63a85a;
-    border-radius: 7px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: clamp(15px, 4vw, 27px);
+    background: #51965c;
+    border-radius: 5px;
+    font-size: clamp(13px, 3.5vw, 28px);
+    user-select: none;
 }
 
-.player {
+.tile.water {
+    background: #2185a1;
+}
+
+.tile.tree {
+    background: #23553c;
+}
+
+.tile.sand {
+    background: #b89a54;
+}
+
+.tile.player {
     background: #ffe08a;
-    box-shadow: 0 0 12px gold;
+    box-shadow: 0 0 15px #ffd166;
+    animation: bounce .5s infinite alternate;
 }
 
-.tree {
-    background: #246044;
-}
-
-.rock {
-    background: #777b80;
-}
-
-.treasure {
-    background: #e5a52d;
+.tile.treasure {
+    background: #e9a52e;
     animation: glow 1s infinite alternate;
 }
 
 @keyframes glow {
-    from { box-shadow: 0 0 3px gold; }
     to { box-shadow: 0 0 15px gold; }
 }
 
-button {
-    cursor: pointer;
-    border: none;
-    border-radius: 10px;
-    background: #ffd166;
-    color: #173044;
-    font-weight: bold;
-    padding: 12px 20px;
+@keyframes bounce {
+    to { transform: translateY(-3px); }
+}
+
+#message {
+    color: #ffd166;
+    padding: 15px 5px 5px;
+    min-height: 45px;
+}
+
+.controls {
+    padding: 20px;
+}
+
+.controls button {
+    font-size: 22px;
     margin: 4px;
-    font-size: 20px;
+    min-width: 55px;
 }
 
-button:hover {
-    background: #ffb52e;
-    transform: scale(1.05);
+.controls small {
+    display: block;
+    color: #a9c6bd;
+    margin-top: 12px;
 }
 
-.message {
-    background: #173d4a;
-    padding: 15px;
-    border-radius: 12px;
-    max-width: 560px;
-    margin: 15px auto;
+.instructions {
+    margin: 20px 0 40px;
+    padding: 20px;
+    background: #143d46;
+    border-radius: 15px;
+    text-align: left;
+}
+
+.instructions h2 {
+    color: #ffd166;
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.instructions p {
+    color: #c3d9d2;
 }
 
 .modal {
     display: none;
     position: fixed;
     inset: 0;
-    background: #000b;
+    z-index: 10;
+    background: #000c;
     justify-content: center;
     align-items: center;
     padding: 20px;
 }
 
 .modal-content {
-    background: #173d4a;
+    background: #143d46;
     border: 2px solid #ffd166;
-    padding: 25px;
     border-radius: 18px;
-    max-width: 380px;
+    padding: 25px;
+    width: min(380px, 100%);
+}
+
+.modal-content h2 {
+    color: #ffd166;
 }
 
 input {
-    padding: 12px;
     width: 100%;
-    margin: 15px 0;
+    padding: 13px;
     border-radius: 8px;
-    border: none;
+    border: 1px solid #ffd166;
+    margin: 15px 0;
+    font-size: 16px;
 }
 
 #feedback {
     color: #ffd166;
+    min-height: 25px;
 }
 
-@media(max-width: 450px) {
-    body { padding: 8px; }
-    h1 { font-size: 29px; }
-    .game { gap: 2px; padding: 4px; }
+footer {
+    padding: 25px 10px;
+    background: #071521;
+    color: #8ba9a0;
+    font-size: 10px;
+    letter-spacing: 2px;
+}
+
+@media(max-width: 550px) {
+    .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .game {
+        gap: 2px;
+        padding: 4px;
+    }
+
+    .game-panel {
+        padding: 7px;
+    }
+
+    .tagline {
+        letter-spacing: 2px;
+    }
 }
