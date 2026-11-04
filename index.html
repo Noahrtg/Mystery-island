@@ -1,0 +1,394 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Treasure Hunt 🏝️</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #071d35, #104e59);
+    color: white;
+    text-align: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+h1 {
+    color: #ffd166;
+    font-size: 38px;
+    text-shadow: 0 0 15px #ffae00;
+}
+
+.subtitle {
+    color: #c8e6df;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 20px;
+}
+
+.stat {
+    background: #173d4a;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: 1px solid #ffd166;
+}
+
+.game {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 4px;
+    max-width: 560px;
+    margin: 25px auto;
+    background: #173d4a;
+    padding: 8px;
+    border-radius: 15px;
+}
+
+.tile {
+    aspect-ratio: 1;
+    background: #63a85a;
+    border-radius: 7px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(15px, 4vw, 27px);
+}
+
+.player {
+    background: #ffe08a;
+    box-shadow: 0 0 12px gold;
+}
+
+.water {
+    background: #2389ad;
+}
+
+.tree {
+    background: #246044;
+}
+
+.rock {
+    background: #777b80;
+}
+
+.treasure {
+    background: #e5a52d;
+    animation: glow 1s infinite alternate;
+}
+
+@keyframes glow {
+    from { box-shadow: 0 0 3px gold; }
+    to { box-shadow: 0 0 15px gold; }
+}
+
+.controls {
+    margin: 20px;
+}
+
+.controls button {
+    font-size: 25px;
+    padding: 12px 20px;
+    margin: 4px;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    background: #ffd166;
+    color: #173044;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #ffb52e;
+    transform: scale(1.05);
+}
+
+.message {
+    background: #173d4a;
+    padding: 15px;
+    border-radius: 12px;
+    max-width: 560px;
+    margin: 15px auto;
+    min-height: 55px;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000b;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.modal-content {
+    background: #173d4a;
+    border: 2px solid #ffd166;
+    padding: 25px;
+    border-radius: 18px;
+    max-width: 380px;
+    width: 100%;
+}
+
+input {
+    padding: 12px;
+    width: 100%;
+    margin: 15px 0;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+}
+
+#feedback {
+    color: #ffd166;
+    min-height: 24px;
+}
+
+@media(max-width: 450px) {
+    body { padding: 8px; }
+    h1 { font-size: 29px; }
+    .game { gap: 2px; padding: 4px; }
+}
+</style>
+</head>
+
+<body>
+
+<h1>🏝️ TREASURE HUNT</h1>
+<p class="subtitle">Explore l'île et découvre les 5 trésors cachés !</p>
+
+<div class="stats">
+    <div class="stat">💰 Trésors : <span id="score">0</span>/5</div>
+    <div class="stat">⭐ Points : <span id="points">0</span></div>
+</div>
+
+<div class="game" id="game"></div>
+
+<div class="message" id="message">
+    Bienvenue aventurier ! Explore l'île pour trouver les trésors.
+</div>
+
+<div class="controls">
+    <div><button onclick="move(0,-1)">⬆️</button></div>
+    <div>
+        <button onclick="move(-1,0)">⬅️</button>
+        <button onclick="move(0,1)">⬇️</button>
+        <button onclick="move(1,0)">➡️</button>
+    </div>
+    <p>Tu peux aussi utiliser les flèches de ton clavier.</p>
+</div>
+
+<button onclick="restart()">🔄 Recommencer</button>
+
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h2>🧩 Énigme mystérieuse</h2>
+        <p id="question"></p>
+        <input id="answer" placeholder="Ta réponse..." autocomplete="off">
+        <button onclick="checkAnswer()">Valider</button>
+        <p id="feedback"></p>
+    </div>
+</div>
+
+<script>
+const width = 9;
+const height = 7;
+
+const obstacles = [
+    [0,3], [1,3], [2,3],
+    [3,1], [4,1], [5,3],
+    [3,7], [4,7], [6,4]
+];
+
+const treasures = [
+    {x:2,y:1, question:"Combien font 5 + 7 ?", answer:"12"},
+    {x:6,y:3, question:"Je suis jaune et brille dans le ciel. Qui suis-je ?", answer:"soleil"},
+    {x:1,y:5, question:"Combien de côtés possède un triangle ?", answer:"3"},
+    {x:7,y:2, question:"Quel animal miaule ?", answer:"chat"},
+    {x:6,y:5, question:"Combien font 10 x 2 ?", answer:"20"}
+];
+
+let player = {x:0,y:0};
+let collected = [];
+let points = 0;
+let currentTreasure = null;
+let finished = false;
+
+const game = document.getElementById("game");
+
+function render() {
+    game.innerHTML = "";
+
+    for(let y=0; y<height; y++) {
+        for(let x=0; x<width; x++) {
+
+            const tile = document.createElement("div");
+            tile.className = "tile";
+
+            const obstacle = obstacles.some(
+                p => p[0]===x && p[1]===y
+            );
+
+            const treasureIndex = treasures.findIndex(
+                t => t.x===x && t.y===y
+            );
+
+            if(player.x===x && player.y===y) {
+                tile.classList.add("player");
+                tile.textContent = "🧑";
+            }
+            else if(obstacle) {
+                tile.classList.add("tree");
+                tile.textContent = "🌳";
+            }
+            else if(treasureIndex !== -1 &&
+                    !collected.includes(treasureIndex)) {
+                tile.classList.add("treasure");
+                tile.textContent = "💎";
+            }
+            else if(x===8 && y===6) {
+                tile.textContent = collected.length===5 ? "🔓" : "🔒";
+                tile.classList.add("rock");
+            }
+            else {
+                tile.textContent = "🌿";
+            }
+
+            game.appendChild(tile);
+        }
+    }
+
+    document.getElementById("score").textContent = collected.length;
+    document.getElementById("points").textContent = points;
+}
+
+function move(dx,dy) {
+    if(finished || currentTreasure !== null) return;
+
+    const nx = player.x + dx;
+    const ny = player.y + dy;
+
+    if(nx<0 || nx>=width || ny<0 || ny>=height) return;
+
+    const blocked = obstacles.some(
+        p => p[0]===nx && p[1]===ny
+    );
+
+    if(blocked) {
+        showMessage("🌳 Un arbre bloque ton chemin !");
+        return;
+    }
+
+    player.x = nx;
+    player.y = ny;
+
+    const index = treasures.findIndex(
+        t => t.x===nx && t.y===ny
+    );
+
+    if(index !== -1 && !collected.includes(index)) {
+        currentTreasure = index;
+        document.getElementById("question").textContent =
+            treasures[index].question;
+        document.getElementById("answer").value = "";
+        document.getElementById("feedback").textContent = "";
+        document.getElementById("modal").style.display = "flex";
+        document.getElementById("answer").focus();
+    }
+
+    if(nx===8 && ny===6) {
+        if(collected.length===5) {
+            win();
+        } else {
+            showMessage("🔒 Le coffre final est verrouillé ! Trouve les 5 trésors.");
+        }
+    }
+
+    render();
+}
+
+function checkAnswer() {
+    if(currentTreasure === null) return;
+
+    const answer = document.getElementById("answer")
+        .value.trim().toLowerCase();
+
+    const correct = treasures[currentTreasure].answer;
+
+    if(answer === correct) {
+        collected.push(currentTreasure);
+        points += 100;
+
+        document.getElementById("modal").style.display = "none";
+
+        currentTreasure = null;
+
+        showMessage("🎉 Bravo ! Tu as trouvé un trésor : +100 points !");
+        render();
+    } else {
+        document.getElementById("feedback").textContent =
+            "❌ Mauvaise réponse. Essaie encore !";
+    }
+}
+
+function showMessage(text) {
+    document.getElementById("message").textContent = text;
+}
+
+function win() {
+    finished = true;
+    points += 500;
+    document.getElementById("points").textContent = points;
+    showMessage("🏆 FÉLICITATIONS ! Tu as trouvé le trésor légendaire et terminé l'aventure !");
+    render();
+}
+
+function restart() {
+    player = {x:0,y:0};
+    collected = [];
+    points = 0;
+    currentTreasure = null;
+    finished = false;
+
+    document.getElementById("modal").style.display = "none";
+    showMessage("Nouvelle aventure ! Bonne chance !");
+    render();
+}
+
+document.addEventListener("keydown", function(e) {
+    if(e.key==="ArrowUp" || e.key==="ArrowDown" ||
+       e.key==="ArrowLeft" || e.key==="ArrowRight") {
+        e.preventDefault();
+    }
+
+    if(e.key==="ArrowUp" || e.key==="w") move(0,-1);
+    if(e.key==="ArrowDown" || e.key==="s") move(0,1);
+    if(e.key==="ArrowLeft" || e.key==="a") move(-1,0);
+    if(e.key==="ArrowRight" || e.key==="d") move(1,0);
+
+    if(e.key==="Enter" && currentTreasure !== null) {
+        checkAnswer();
+    }
+});
+
+render();
+</script>
+
+</body>
+</html>
